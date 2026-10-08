@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package dk.via.pro3.generated;
+
+// Read-only service on top of the Central Traceability Store.
+// Used to trace animals to products and back, e.g. when a product must be recalled.
+service TraceabilityService {
+  // Registration numbers of all animals that have parts in the given product.
+  rpc GetAnimalsInProduct(GetAnimalsInProductRequest) returns (AnimalsResponse);
+  // All products that contain at least one part of the given animal.
+  rpc GetProductsForAnimal(GetProductsForAnimalRequest) returns (ProductsResponse);
+}
+
+// Represents an Animal registered at the first station.
+message Animal {
+  // Registration number (unique identifier) of the animal.
+  string registration_number = 1;
+  // Weight in kg when the animal arrived.
+  double weight = 2;
+  // Arrival time (ISO-8601).
+  string arrival_time = 3;
+}
+
+// Represents a Product packed at the third station.
+message Product {
+  // Unique identifier
+  string id = 1;
+  // Kind of product, e.g. "PART_PACKAGE" or "HALF_ANIMAL".
+  string type = 2;
+  // Time the product was registered (ISO-8601).
+  string created_at = 3;
+}
+
+// Request message for finding the animals in a product.
+message GetAnimalsInProductRequest {
+  // ID of the product.
+  string product_id = 1;
+}
+
+// Request message for finding the products an animal is part of.
+message GetProductsForAnimalRequest {
+  // Registration number of the animal.
+  string registration_number = 1;
+}
+
+message AnimalsResponse {
+  // All animals involved in the product (no duplicates).
+  repeated Animal animals = 1;
+}
+
+message ProductsResponse {
+  // All products the animal has been involved in (no duplicates).
+  repeated Product products = 1;
+}
